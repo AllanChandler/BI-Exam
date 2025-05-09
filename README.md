@@ -1,6 +1,6 @@
 # BI-Exam
 
-# Group
+# Gruppe
 
 - Allan
 - Marlene
