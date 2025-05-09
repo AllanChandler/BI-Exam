@@ -28,7 +28,7 @@ Den største udfordring er at identificere de faktorer, der bidrager til prisflu
 4. Hvilke mønstre kan vi identificere i prisudviklingen baseret på rute og tidspunkt?
 
 ## Hypoteser
-1. Flybilletpriser afhænger af ruten, hvor internationale flyvninger generelt er dyrere end indenrigsfly.
+1. Flybilletpriser afhænger af ruten, hvor internationale flyvninger generelt er dyrere end indenrigsflyvninger.
 2. Flyselskabet og tidspunktet for booking har en signifikant indflydelse på billetpriserne.
 3. Maskinlæringsmodeller vil kunne forudsige billetpriser med højere præcision end traditionelle regressionsmodeller, når der tages højde for faktorer som rute og flyselskab.
 
