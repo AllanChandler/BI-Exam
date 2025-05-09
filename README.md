@@ -2,10 +2,10 @@
 
 # Group
 
-Allan
-Marlene
-Marwa
-Niklas
+- Allan
+- Marlene
+- Marwa
+- Niklas
 
 # Problemformulering:
 
