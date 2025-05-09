@@ -31,3 +31,8 @@ Den største udfordring er at identificere de faktorer, der bidrager til prisflu
 1. Flybilletpriser afhænger af ruten, hvor internationale flyvninger generelt er dyrere end indenrigsfløje.
 2. Flyselskabet og tidspunktet for booking har en signifikant indflydelse på billetpriserne.
 3. Maskinlæringsmodeller vil kunne forudsige billetpriser med højere præcision end traditionelle regressionsmodeller, når der tages højde for faktorer som rute og flyselskab.
+
+# Datasæt:
+
+https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction
+https://www.kaggle.com/datasets/anshuman0427/flight-price-dataset
