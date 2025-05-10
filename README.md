@@ -59,11 +59,11 @@ dem vi havde i forvejen:
 3. Sørg for at Python er installeret på din computer.
 4. Installer Streamlit med følgende kommando, hvis det ikke allerede er installeret:
 
-   ```bash
-pip install streamlit
+   ```bash pip install streamlit
+
 
 5. Start applikationen med denne kommando:
 
-   ```bash
-streamlit run main.py
+   ```bash streamlit run main.py
+
 
