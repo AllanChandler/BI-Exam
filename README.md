@@ -22,6 +22,18 @@ Formålet med dette projekt er at anvende maskinlæring og business intelligence
 Den største udfordring er at identificere de faktorer, der bidrager til prisfluktuationer, herunder sæsonbestemte variationer, efterspørgsel og variationer baseret på flyselskab og rute. En anden udfordring er at integrere de to datasæt og bygge en effektiv prædiktiv model, der tager højde for disse faktorer.
 
 ## Forskningsspørgsmål
+
+Dem som jeg tænker vi skal have:
+
+datasæt 1:
+Hvordan varierer flypriserne afhængigt af antallet af dage, der er tilbage før afrejse?
+Hvordan påvirker antallet af stop flypriserne?
+
+datasæt 2:
+Hvordan varierer flypriserne afhængigt af rejsemåneden?
+Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
+
+dem vi havde i forvejen:
 1. Hvilke faktorer (som rute, flyselskab, tidspunkt) påvirker flybilletpriser mest?
 2. Hvordan påvirker flyselskab, rute og tidspunkt flybilletpriserne?
 3. Hvordan kan maskinlæringsmodeller forudsige flybilletpriser præcist ud fra de tilgængelige faktorer?
