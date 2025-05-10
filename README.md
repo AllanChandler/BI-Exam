@@ -30,8 +30,8 @@ datasæt 1:
 2. Hvordan påvirker antallet af stop flypriserne?
 
 datasæt 2:
-3. Hvordan varierer flypriserne afhængigt af rejsemåneden?
-4. Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
+1. Hvordan varierer flypriserne afhængigt af rejsemåneden?
+2. Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
 
 dem vi havde i forvejen:
 1. Hvilke faktorer (som rute, flyselskab, tidspunkt) påvirker flybilletpriser mest?
