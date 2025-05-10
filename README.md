@@ -9,6 +9,12 @@
 
 # Problemformulering:
 
+## Annotation
+Vi adresserer udfordringen med uforudsigelige flybilletpriser, som skaber usikkerhed for både rejsende og flyselskaber. 
+Dette er et vigtigt forskningsmål, da præcise forudsigelser kan hjælpe med at optimere prisstrategier og forbedre kundetilfredsheden. 
+Vores løsning vil udvikle en model baseret på business intelligence og maskinlæring, der forudsiger flybilletpriser ud fra historiske data og rejseparametre. 
+Denne løsning vil gavne både rejsende, som får bedre prisoverblik, og flyselskaber, der kan justere deres prisstrategier
+
 ## Introduktion
 Flybilletpriser udgør en stor udfordring for både passagerer og flyselskaber, da priserne er påvirket af en række faktorer, der konstant ændrer sig. For at kunne forudsige disse priser mere præcist er det nødvendigt at forstå, hvordan forskellige faktorer som ruten, tidspunktet for booking, flyselskabet og afgangs-/ankomstbyerne bidrager til prisvariationerne. I dette projekt vil vi bruge business intelligence (BI) og maskinlæring (ML) til at udvikle modeller, der kan forudsige flybilletpriser baseret på de historiske data om flyrejser og de tilknyttede variable, som findes i de valgte datasæt.
 
@@ -17,15 +23,6 @@ Flybilletpriser er blevet en udfordring for både passagerer og flyselskaber på
 
 ## Mål
 Formålet med dette projekt er at anvende maskinlæring og business intelligence-teknikker til at forudsige flybilletpriser. Vi vil analysere historiske billetpriser sammen med faktorer som flyselskab, afgangs- og ankomstbyer samt datoer for at skabe en model, der præcist forudsiger prisen på flybilletter for forskellige ruter og tidspunkter.
-
-## Udfordringer
-Den største udfordring er at identificere de faktorer, der bidrager til prisfluktuationer, herunder sæsonbestemte variationer, efterspørgsel og variationer baseret på flyselskab og rute. En anden udfordring er at integrere de to datasæt og bygge en effektiv prædiktiv model, der tager højde for disse faktorer.
-
-## Datasæt:
-
-https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction
-
-https://www.kaggle.com/datasets/anshuman0427/flight-price-dataset
 
 ## Forskningsspørgsmål
 
@@ -46,24 +43,24 @@ dem vi havde i forvejen:
 4. Hvilke mønstre kan vi identificere i prisudviklingen baseret på rute og tidspunkt?
 
 ## Hypoteser
-1. Flybilletpriser afhænger af ruten, hvor internationale flyvninger generelt er dyrere end indenrigsflyvninger.
-2. Flyselskabet og tidspunktet for booking har en signifikant indflydelse på billetpriserne.
-3. Maskinlæringsmodeller vil kunne forudsige billetpriser med højere præcision end traditionelle regressionsmodeller, når der tages højde for faktorer som rute og flyselskab.
+1. Jo færre dage der er tilbage før afrejse, desto højere vil flypriserne være.
+2. Flyvninger med flere stop er generelt billigere end direkte flyvninger.
+3. Flypriserne varierer systematisk med rejsemåneden, hvor højsæson (f.eks. juli og december) medfører højere priser end lavsæson.
+4. Premium-versioner (f.eks. Business eller Premium Economy) af samme flyselskab koster væsentligt mere end standard.
 
+## Udfordringer
+Den største udfordring er at identificere de faktorer, der bidrager til prisfluktuationer, herunder sæsonbestemte variationer, efterspørgsel og variationer baseret på flyselskab og rute. En anden udfordring er at integrere de to datasæt og bygge en effektiv prædiktiv model, der tager højde for disse faktorer.
 
+## Datasæt:
 
-# Implementeringsvejledning
+https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction
 
-1. Klon projektets repository
-2. Åbn en terminal og naviger til projektmappen.
-3. Sørg for at Python er installeret på din computer.
-4. Installer Streamlit med følgende kommando, hvis det ikke allerede er installeret:
+https://www.kaggle.com/datasets/anshuman0427/flight-price-dataset
 
-   ```bash pip install streamlit
+## Implementeringsvejledning
 
+Start applikationen med denne kommando:
 
-5. Start applikationen med denne kommando:
-
-   ```bash streamlit run main.py
-
-
+```bash
+streamlit run main.py
+```
