@@ -26,12 +26,12 @@ Den største udfordring er at identificere de faktorer, der bidrager til prisflu
 Dem som jeg tænker vi skal have:
 
 datasæt 1:
-Hvordan varierer flypriserne afhængigt af antallet af dage, der er tilbage før afrejse?
-Hvordan påvirker antallet af stop flypriserne?
+1. Hvordan varierer flypriserne afhængigt af antallet af dage, der er tilbage før afrejse?
+2. Hvordan påvirker antallet af stop flypriserne?
 
 datasæt 2:
-Hvordan varierer flypriserne afhængigt af rejsemåneden?
-Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
+3. Hvordan varierer flypriserne afhængigt af rejsemåneden?
+4. Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
 
 dem vi havde i forvejen:
 1. Hvilke faktorer (som rute, flyselskab, tidspunkt) påvirker flybilletpriser mest?
