@@ -21,6 +21,12 @@ Formålet med dette projekt er at anvende maskinlæring og business intelligence
 ## Udfordringer
 Den største udfordring er at identificere de faktorer, der bidrager til prisfluktuationer, herunder sæsonbestemte variationer, efterspørgsel og variationer baseret på flyselskab og rute. En anden udfordring er at integrere de to datasæt og bygge en effektiv prædiktiv model, der tager højde for disse faktorer.
 
+## Datasæt:
+
+https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction
+
+https://www.kaggle.com/datasets/anshuman0427/flight-price-dataset
+
 ## Forskningsspørgsmål
 
 Dem som jeg tænker vi skal have:
@@ -44,8 +50,20 @@ dem vi havde i forvejen:
 2. Flyselskabet og tidspunktet for booking har en signifikant indflydelse på billetpriserne.
 3. Maskinlæringsmodeller vil kunne forudsige billetpriser med højere præcision end traditionelle regressionsmodeller, når der tages højde for faktorer som rute og flyselskab.
 
-# Datasæt:
 
-https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction
 
-https://www.kaggle.com/datasets/anshuman0427/flight-price-dataset
+# Implementeringsvejledning
+
+1. Klon projektets repository
+2. Åbn en terminal og naviger til projektmappen.
+3. Sørg for at Python er installeret på din computer.
+4. Installer Streamlit med følgende kommando, hvis det ikke allerede er installeret:
+
+   ```bash
+pip install streamlit
+
+5. Start applikationen med denne kommando:
+
+   ```bash
+streamlit run main.py
+
