@@ -11,18 +11,25 @@
 
 ## Annotation
 Vi adresserer udfordringen med uforudsigelige flybilletpriser, som skaber usikkerhed for både rejsende og flyselskaber. 
-Dette er et vigtigt forskningsmål, da præcise forudsigelser kan hjælpe med at optimere prisstrategier og forbedre kundetilfredsheden. 
-Vores løsning vil udvikle en model baseret på business intelligence og maskinlæring, der forudsiger flybilletpriser ud fra historiske data og rejseparametre. 
-Denne løsning vil gavne både rejsende, som får bedre prisoverblik, og flyselskaber, der kan justere deres prisstrategier
+Dette er et vigtigt forskningsmål, da en dybere forståelse af, hvad der driver prisvariationer, kan hjælpe med at optimere prisstrategier og forbedre kundetilfredsheden. 
+Vores løsning vil anvende business intelligence og maskinlæring til at analysere historiske data og rejseparametre for at finde mønstre i prisvariationerne.
+Denne løsning vil gavne både rejsende, som får bedre prisoverblik, og flyselskaber, der kan tilpasse deres prisstrategier mere effektivt.
 
 ## Introduktion
-Flybilletpriser udgør en stor udfordring for både passagerer og flyselskaber, da priserne er påvirket af en række faktorer, der konstant ændrer sig. For at kunne forudsige disse priser mere præcist er det nødvendigt at forstå, hvordan forskellige faktorer som ruten, tidspunktet for booking, flyselskabet og afgangs-/ankomstbyerne bidrager til prisvariationerne. I dette projekt vil vi bruge business intelligence (BI) og maskinlæring (ML) til at udvikle modeller, der kan forudsige flybilletpriser baseret på de historiske data om flyrejser og de tilknyttede variable, som findes i de valgte datasæt.
+Flybilletpriser svinger meget og kan være svære at forudse, hvilket kan skabe frustration både for rejsende og flyselskaber.
+Priserne ændrer sig afhængigt af flere faktorer, såsom hvornår man booker, hvilken rute man tager, om der er stop undervejs, hvilken tid på året det er, og hvilken type billet eller flyselskab man vælger. 
+Dette gør det svært for både rejsende at finde de billigste billetter og for flyselskaber at sætte de rigtige priser. 
+I dette projekt vil vi bruge business intelligence og maskinlæring til at analysere historiske data og identificere, hvordan faktorer som afgangs og ankomstby, flyselskab, bookingtidspunkt, sæson og antal stop påvirker prisvariationer.
+På den måde kan både rejsende få bedre overblik, og flyselskaberne kan tilpasse deres prisstrategier mere effektivt.
 
 ## Kontekst
-Flybilletpriser er blevet en udfordring for både passagerer og flyselskaber på grund af de komplekse og svingende faktorer, der påvirker priserne. For at kunne forudsige disse priser præcist er det vigtigt at forstå, hvilke faktorer der driver prisvariationerne. Dette projekt sigter mod at udvikle modeller, der kan forudsige billetpriser ved at analysere historiske flydata og faktorer som ruter, flyselskaber, afgangs-/ankomstbyer og bookingtidspunkt.
+Flypriser påvirkes af mange forskellige faktorer, hvilket gør det svært at gennemskue, hvordan priserne fastsættes. 
+For at kunne forstå, hvordan priserne varierer, er det nødvendigt at analysere historiske data og identificere faktorer som afgangs og ankomstby, flyselskab, bookingtidspunkt, sæson og antal stop. 
+Ved at finde mønstre i disse data kan vi få et bedre billede af, hvordan priserne ændrer sig under forskellige forhold.
 
 ## Mål
-Formålet med dette projekt er at anvende maskinlæring og business intelligence-teknikker til at forudsige flybilletpriser. Vi vil analysere historiske billetpriser sammen med faktorer som flyselskab, afgangs- og ankomstbyer samt datoer for at skabe en model, der præcist forudsiger prisen på flybilletter for forskellige ruter og tidspunkter.
+Projektets formål er at undersøge, hvordan flypriser varierer baseret på historiske data og relevante faktorer. 
+Dette vil gavne både rejsende og flyselskaber i deres planlægning af rejser og prisstrategier.
 
 ## Forskningsspørgsmål
 
@@ -47,9 +54,6 @@ dem vi havde i forvejen:
 2. Flyvninger med flere stop er generelt billigere end direkte flyvninger.
 3. Flypriserne varierer systematisk med rejsemåneden, hvor højsæson (f.eks. juli og december) medfører højere priser end lavsæson.
 4. Premium-versioner (f.eks. Business eller Premium Economy) af samme flyselskab koster væsentligt mere end standard.
-
-## Udfordringer
-Den største udfordring er at identificere de faktorer, der bidrager til prisfluktuationer, herunder sæsonbestemte variationer, efterspørgsel og variationer baseret på flyselskab og rute. En anden udfordring er at integrere de to datasæt og bygge en effektiv prædiktiv model, der tager højde for disse faktorer.
 
 ## Datasæt:
 
