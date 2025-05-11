@@ -33,21 +33,10 @@ Dette vil gavne både rejsende og flyselskaber i deres planlægning af rejser og
 
 ## Forskningsspørgsmål
 
-Dem som jeg tænker vi skal have:
-
-datasæt 1:
 1. Hvordan varierer flypriserne afhængigt af antallet af dage, der er tilbage før afrejse?
 2. Hvordan påvirker antallet af stop flypriserne?
-
-datasæt 2:
-1. Hvordan varierer flypriserne afhængigt af rejsemåneden?
-2. Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
-
-dem vi havde i forvejen:
-1. Hvilke faktorer (som rute, flyselskab, tidspunkt) påvirker flybilletpriser mest?
-2. Hvordan påvirker flyselskab, rute og tidspunkt flybilletpriserne?
-3. Hvordan kan maskinlæringsmodeller forudsige flybilletpriser præcist ud fra de tilgængelige faktorer?
-4. Hvilke mønstre kan vi identificere i prisudviklingen baseret på rute og tidspunkt?
+3. Hvordan varierer flypriserne afhængigt af rejsemåneden?
+4. Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
 
 ## Hypoteser
 1. Jo færre dage der er tilbage før afrejse, desto højere vil flypriserne være.
