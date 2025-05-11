@@ -32,16 +32,16 @@ Resultaterne vil kunne bruges af rejsende til at træffe bedre beslutninger og a
 
 ## Forskningsspørgsmål
 
-1. Hvordan varierer flypriserne afhængigt af antallet af dage, der er tilbage før afrejse?
-2. Hvordan påvirker antallet af stop flypriserne?
-3. Hvordan varierer flypriserne afhængigt af rejsemåneden?
-4. Hvordan varierer billetpriser mellem standard og premium-versioner af samme flyselskab?
+1. Hvordan varierer priserne afhængigt af antallet af dage, der er tilbage før afrejse?
+2. Hvordan påvirker antallet af stop prisen?
+3. Hvordan varierer priserne afhængigt af rejsemåneden?
+4. Hvordan varierer priserne mellem standard og premium-versioner af samme flyselskab?
 
 ## Hypoteser
-1. Vi forventer, at flypriser stiger, jo færre dage der er tilbage før afrejse.
-2. Vi forventer, at flyvninger med flere stop generelt er billigere end direkte flyvninger.
-3. Vi forventer, at flypriser varierer med rejsemåneden, hvor højsæson (f.eks. juli og december) medfører højere priser end lavsæson.
-4. Vi forventer, at premium-versioner (f.eks. Business eller Premium Economy) af samme flyselskab koster mere end standardbilletter.
+1. Prisen stiger, jo færre dage der er tilbage før afrejse.
+2. Flyvninger med flere stop er generelt billigere end direkte flyvninger.
+3. Priserne varierer med rejsemåneden, hvor højsæson (f.eks. juli og december) medfører højere priser end lavsæson.
+4. Premium-versioner som Business og Premium Economy af samme flyselskab har en højere pris end standard-versioner.
 
 ## Datasæt:
 
