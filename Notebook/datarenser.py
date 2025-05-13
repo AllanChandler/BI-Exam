@@ -51,4 +51,7 @@ def load_data_train(path):
         if dfNumeric[col].dtype == 'object':
             dfNumeric[col] = dfNumeric[col].astype('string')
 
+    # Gør kolonnenavne til små bogstaver
+    dfNumeric.columns = [col.lower() for col in dfNumeric.columns]
+
     return dfNumeric
