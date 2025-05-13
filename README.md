@@ -40,7 +40,7 @@ Resultaterne vil kunne bruges af rejsende til at træffe bedre beslutninger og a
 ## Hypoteser
 1. Prisen stiger, jo færre dage der er tilbage før afrejse.
 2. Flyvninger med flere stop er generelt billigere end direkte flyvninger.
-3. Priserne varierer med rejsemåneden, hvor højsæson (f.eks. juli og december) medfører højere priser end lavsæson.
+3. Priserne varierer med rejsemåneden, hvor højsæson (f.eks. juli) medfører højere priser end lavsæson.
 4. Premium-versioner som Business og Premium Economy af samme flyselskab har en højere pris end standard-versioner.
 
 ## Datasæt:
