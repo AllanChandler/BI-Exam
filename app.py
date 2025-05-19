@@ -10,7 +10,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.sidebar.header("Vælg en side", divider='rainbow')
 
 banner = """
     <body style="background-color:yellow;">
