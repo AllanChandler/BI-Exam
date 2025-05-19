@@ -4,7 +4,7 @@ from streamlit_option_menu import option_menu
 import glob
 
 st.set_page_config(
-    page_title="BI Exam Project",
+    page_title="BI Exam Projekt",
     page_icon="🧊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -16,7 +16,7 @@ banner = """
     <body style="background-color:yellow;">
         <div style="background-image: linear-gradient(90deg, rgb(255, 75, 75), rgb(28, 3, 204)); padding:10px">
             <h2 style="color:white;text-align:center;"> BI Exam Project </h2>
-            <h3 style="color:white;text-align:center;"> Lavete af Allan, Malene, Marwa og Nicklas </h3>
+            <h3 style="color:white;text-align:center;"> Lavet af: Allan, Malene, Marwa og Nicklas </h3>
             <div style="text-align:center">
             <span style="color:white;text-align:center;"> Dette projekt indeholder algoritmer til at udforske flyprisdata. </span>
             </div>
