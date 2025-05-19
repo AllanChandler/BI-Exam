@@ -29,13 +29,13 @@ st.markdown(banner, unsafe_allow_html=True)
 
 try:
     # Load clean and train datasets
-    if glob.glob("data/clean_data.csv"):
-        st.session_state['dfClean'] = load_data_clean("data/clean_data.csv")
+    if glob.glob("Data/Clean_Dataset.csv"):
+        st.session_state['dfClean'] = load_data_clean("Data/Clean_Dataset.csv")
     else:
         raise FileNotFoundError("Clean data file not found")
 
-    if glob.glob("data/train_data.csv"):
-        st.session_state['dfTrain'] = load_data_train("data/train_data.csv")
+    if glob.glob("Data/Data_Train.csv"):
+        st.session_state['dfTrain'] = load_data_train("Data/Data_Train.csv")
     else:
         raise FileNotFoundError("Train data file not found")
 
