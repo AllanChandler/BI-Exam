@@ -5,13 +5,21 @@ def load_data_clean(path):
     # Læser datasættet
     df = pd.read_csv(path, index_col=0)
 
-    # Fjerner irrelevante kolonner
+    # Fjerner unødvendige kolonner
     df.drop(['flight', 'departure_time', 'arrival_time'], axis=1, inplace=True)
 
-    # Konverterer alle 'object'-kolonner til 'string'-type
+    # Konverterer 'object'-kolonner til 'string'
     for col in df.columns:
         if df[col].dtype == 'object':
             df[col] = df[col].astype('string')
+
+
+    # Konverterer 'stops' til numeriske værdier
+    df['stops_numb'] = df['stops'].map({
+        'zero': 0,
+        'one': 1,
+        'two_or_more': 2,
+    })
 
     return df
 
@@ -25,16 +33,21 @@ def load_data_train(path):
     # Fjerner 'Dep_Time' kolonnen
     df.drop(['Dep_Time'], axis=1, inplace=True)
 
-    # Konverterer 'Date_of_Journey' til datetime
+    # Konverterer kolonnen 'Date_of_Journey' fra tekstformat til datetime-objekter med formatet dag/måned/år
     df['Date_of_Journey'] = pd.to_datetime(df['Date_of_Journey'], format='%d/%m/%Y')
 
-    # Ekstraherer måned
+    # Ekstraherer måned, dag og ugenummer fra 'Date_of_Journey' og gemmer som nye kolonner
     df['Journey_month'] = df['Date_of_Journey'].dt.month.astype('int64')
+    df['Journey_day'] = df['Date_of_Journey'].dt.day.astype('int64')
+    df['Journey_week'] = df['Date_of_Journey'].dt.isocalendar().week.astype('int64')
 
-    # Fjerner den oprindelige dato, da vi ikke skal bruge den mere
+    # Tilføjer kolonne der viser om rejsen er i weekenden
+    df['Is_weekend'] = df['Date_of_Journey'].dt.dayofweek >= 5
+
+    # Fjerner den oprindelige 'Date_of_Journey'-kolonne, da vi har ekstraheret de nødvendige oplysninger
     df.drop('Date_of_Journey', axis=1, inplace=True)
 
-    # Opdaterer 'Class'-kolonnen
+    # Opdaterer 'Class'-kolonnen baseret på Airline kolonnen
     df['Class'] = df['Airline'].apply(
         lambda x: 'Business' if 'Business' in x else (
             'Premium economy' if 'Premium economy' in x else 'Standard'))
@@ -43,6 +56,13 @@ def load_data_train(path):
     for col in df.columns:
         if df[col].dtype == 'object':
             df[col] = df[col].astype('string')
+
+    # Konverterer klasser til numeriske værdier
+    df['class_numb'] = df['Class'].map({
+        'Standard': 0,
+        'Premium economy': 1,
+        'Business': 2,
+    })
 
     # Gør kolonnenavne små
     df.columns = [col.lower() for col in df.columns]
