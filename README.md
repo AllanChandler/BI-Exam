@@ -54,5 +54,5 @@ https://www.kaggle.com/datasets/anshuman0427/flight-price-dataset
 Start applikationen med denne kommando:
 
 ```bash
-streamlit run main.py
+streamlit run app.py
 ```
