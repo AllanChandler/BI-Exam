@@ -38,13 +38,13 @@ try:
     )
 
     # Indlæs datasæt
-    if glob.glob("Data/Clean_Dataset.csv"):
-        st.session_state['dfClean'] = load_data_clean("Data/Clean_Dataset.csv")
+    if glob.glob("data/Clean_Dataset.csv"):
+        st.session_state['dfClean'] = load_data_clean("data/Clean_Dataset.csv")
     else:
         raise FileNotFoundError("Clean data file not found")
 
-    if glob.glob("Data/Data_Train.csv"):
-        st.session_state['dfTrain'] = load_data_train("Data/Data_Train.csv")
+    if glob.glob("data/Data_Train.csv"):
+        st.session_state['dfTrain'] = load_data_train("data/Data_Train.csv")
     else:
         raise FileNotFoundError("Train data file not found")
 
