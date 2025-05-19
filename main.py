@@ -28,7 +28,16 @@ banner = """
 st.markdown(banner, unsafe_allow_html=True)
 
 try:
-    # Load clean and train datasets
+    from datarenser import (
+        load_data_clean,
+        load_data_train,
+        get_numeric_df_clean,
+        get_numeric_df_train,
+        get_no_outliers_df_clean,
+        get_no_outliers_df_train
+    )
+
+    # Indlæs datasæt
     if glob.glob("Data/Clean_Dataset.csv"):
         st.session_state['dfClean'] = load_data_clean("Data/Clean_Dataset.csv")
     else:
@@ -39,15 +48,15 @@ try:
     else:
         raise FileNotFoundError("Train data file not found")
 
-    # Først lav numeriske versioner på rå data (inkl. outliers)
+    # Først numeriske versioner af rå data (inkl. outliers)
     st.session_state['dfClean_numeric'] = get_numeric_df_clean(st.session_state['dfClean'])
     st.session_state['dfTrain_numeric'] = get_numeric_df_train(st.session_state['dfTrain'])
 
-    # Dernæst fjern outliers i rå data
+    # Dernæst fjern outliers fra rå data
     st.session_state['dfClean_no_outliers'] = get_no_outliers_df_clean(st.session_state['dfClean'])
     st.session_state['dfTrain_no_outliers'] = get_no_outliers_df_train(st.session_state['dfTrain'])
 
 except Exception as e:
-    st.error("Error loading or processing data. Please ensure the data files are in the 'data' folder.")
+    st.error("Error loading or processing data. Please ensure the data files are in the 'Data' folder.")
     st.error(str(e))
     st.error("If these errors persist, please contact the developers at cph-mk797@cphbusiness.dk")
