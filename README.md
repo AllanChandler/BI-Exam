@@ -5,7 +5,7 @@
 - Allan
 - Marlene
 - Marwa
-- Niklas
+- Nicklas
 
 # Problemformulering:
 
