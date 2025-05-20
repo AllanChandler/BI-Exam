@@ -42,7 +42,7 @@ def load_data_train(path):
     df['Journey_week'] = df['Date_of_Journey'].dt.isocalendar().week.astype('int64')
 
     # Tilføjer kolonne der viser om rejsen er i weekenden
-    df['Is_weekend'] = df['Date_of_Journey'].dt.dayofweek >= 5
+    df['Is_weekend'] = (df['Date_of_Journey'].dt.dayofweek >= 5).astype(int)
 
     # Fjerner den oprindelige 'Date_of_Journey'-kolonne, da vi har ekstraheret de nødvendige oplysninger
     df.drop('Date_of_Journey', axis=1, inplace=True)
