@@ -36,14 +36,14 @@ Resultaterne vil kunne bruges af rejsende til at træffe bedre beslutninger og a
 2. Hvordan påvirker antallet af stop prisen?
 3. Hvordan varierer priserne afhængigt af rejsemåneden?
 4. Hvordan varierer priserne mellem standard og premium-versioner af samme flyselskab?
-5. Hvordan kan flyselskaber i datasættene kategoriseres i grupper baseret på ligheder i deres parametre?
+5. Hvordan kan flyselskaber kategoriseres i grupper baseret på prisvariationer over rejsemåneden og forskelle mellem standard- og premiumversioner?
 
 ## Hypoteser
 1. Prisen stiger, jo færre dage der er tilbage før afrejse.
 2. Flyvninger med flere stop er generelt billigere end direkte flyvninger.
 3. Priserne varierer med rejsemåneden, hvor højsæson (f.eks. juli) medfører højere priser end lavsæson.
 4. Premium-versioner som Business og Premium Economy af samme flyselskab har en højere pris end standard-versioner.
-5. Flyselskaber i datasættene danner naturlige grupper baseret på ligheder i deres parametre, hvor lavprisflyselskaber typisk er kendetegnet ved lavere priser, kortere rejsetider og færre stop, mens traditionelle flyselskaber har højere priser, længere rejsetider og tilbyder flere faciliteter og komfortelementer.
+5. Flyselskaber kan kategoriseres i grupper baseret på prisvariationer over rejsemåneden, hvor priserne generelt stiger i højsæsonen, samt forskelle mellem standard- og premiumversioner, hvor premiumversioner forventes at have markant højere priser end standardklassen.
    
 ## Datasæt:
 
