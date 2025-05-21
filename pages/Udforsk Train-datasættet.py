@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+import pandas as pd
 
 st.set_page_config(
     page_title="Dataudforskning_Train",
@@ -34,29 +35,49 @@ def column_picker(df):
     return x, y, z
 
 def charts():
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Histogram', 'Boxplot', 'Scatterplot', 'Lineplot', 'Correlation Heatmap', "Barplot"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        ['Histogram', 'Boxplot', 'Scatterplot', 'Correlation Heatmap', "Barplot"]
+    )
+
     with tab1:
-        fig = px.histogram(df, x=x, y=y, color=z, title='Histogram', histfunc='avg')
-        st.plotly_chart(fig)
+        try:
+            fig = px.histogram(df, x=x, y=y, color=z, title='Histogram', histfunc='avg')
+            st.plotly_chart(fig)
+        except Exception:
+            st.warning("Kan ikke lave histogram med de valgte kolonner.")
+
     with tab2:
-        fig = px.box(df, x=x, y=y, color=z, title='Boxplot')
-        st.plotly_chart(fig)
+        try:
+            fig = px.box(df, x=x, y=y, color=z, title='Boxplot')
+            st.plotly_chart(fig)
+        except Exception:
+            st.warning("Kan ikke lave boxplot med de valgte kolonner.")
+
     with tab3:
-        fig = px.scatter(df, x=x, y=y, color=z, title='Scatterplot')
-        st.plotly_chart(fig)
+        try:
+            fig = px.scatter(df, x=x, y=y, color=z, title='Scatterplot')
+            st.plotly_chart(fig)
+        except Exception:
+            st.warning("Kan ikke lave scatterplot med de valgte kolonner.")
+
     with tab4:
-        fig = px.line(df, x=x, y=y, color=z, title='Lineplot')
-        st.plotly_chart(fig)
+        try:
+            fig = px.imshow(
+                df[[x, y]].corr(),
+                title='Correlation Heatmap',
+                text_auto=True  
+            )
+            st.plotly_chart(fig)
+        except Exception:
+            st.warning("Vælg to numeriske kolonner til heatmap.")
+
     with tab5:
         try:
-            fig = px.imshow(df[[x, y]].corr(), title='Correlation Heatmap')
+            df_avg = df.groupby(x)[y].mean().reset_index()
+            fig = px.bar(df_avg, x=x, y=y, title='Barplot (gennemsnit pr. kategori)')
             st.plotly_chart(fig)
-        except:
-            st.warning("Vælg to numeriske kolonner til heatmap.")
-    with tab6:
-        df_avg = df.groupby(x)[y].mean().reset_index()
-        fig = px.bar(df_avg, x=x, y=y, color=None, title='Barplot (gennemsnit pr. kategori)')
-        st.plotly_chart(fig)
+        except Exception:
+            st.warning("Kan ikke lave barplot med de valgte kolonner.")
 
 x, y, z = column_picker(df)
 

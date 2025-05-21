@@ -1,20 +1,32 @@
 import pandas as pd
 from z_score import beregnListe, beregnDataFrame, hentOutliers
 
+# Denne fil er blevet lavet fordi det er vigtigt med ensartet og pålidelig databehandling
+# til analyse og maskinlæring. Den håndterer datarensning og gør dataforberedelsen hurtig,
+# genanvendelig og struktureret.
+
+# Funktioner:
+# - load_data_clean(path): Læser og renser data til analyse (fjerner irrelevante kolonner, konverterer typer osv.).
+# - load_data_train(path): Læser og renser data til analyse (fjerner irrelevante kolonner, konverterer typer osv.).
+# - get_numeric_df_clean(df): One-hot encodning af kategoriske variabler i 'clean' datasættet.
+# - get_numeric_df_train(df): One-hot encodning af kategoriske variabler i 'train' datasættet.
+# - get_no_outliers_df_clean(df): Fjerner outliers i 'price' vha. z-score i 'clean' datasættet.
+# - get_no_outliers_df_train(df): Kombineret IQR og z-score filtrering af outliers i 'train' datasættet.
+
 def load_data_clean(path):
     # Læser datasættet
     df = pd.read_csv(path, index_col=0)
 
-    # Fjerner unødvendige kolonner
+    # Fjerner kolonner, der ikke er relevante for analysen
     df.drop(['flight', 'departure_time', 'arrival_time'], axis=1, inplace=True)
 
-    # Konverterer 'object'-kolonner til 'string'
+    # Sikrer ens datatype ved at konvertere 'object'-kolonner til 'string'-kolonner
     for col in df.columns:
         if df[col].dtype == 'object':
             df[col] = df[col].astype('string')
 
 
-    # Konverterer 'stops' til numeriske værdier
+    # Gør 'stops' numerisk for brug i f.eks. korrelationsanalyse
     df['stops_numb'] = df['stops'].map({
         'zero': 0,
         'one': 1,
@@ -27,89 +39,91 @@ def load_data_train(path):
     # Læser datasættet
     df = pd.read_csv(path)
 
-    # Fjerner duplikater
+    # Fjerner duplikater for at undgå overvægt af gentagne data
     df = df.drop_duplicates()
 
-    # Fjerner 'Dep_Time' kolonnen
+    # Fjerner 'Dep_Time' kolonnen, da den ikke skal bruges i analysen
     df.drop(['Dep_Time'], axis=1, inplace=True)
 
-    # Konverterer kolonnen 'Date_of_Journey' fra tekstformat til datetime-objekter med formatet dag/måned/år
+    # Konverterer dato til datetime-type for nem ekstraktion
     df['Date_of_Journey'] = pd.to_datetime(df['Date_of_Journey'], format='%d/%m/%Y')
 
-    # Ekstraherer måned, dag og ugenummer fra 'Date_of_Journey' og gemmer som nye kolonner
+    # Ekstraherer måned, dag, ugenummer og tilføjer en kolonne, der angiver om rejsen er i weekenden (lørdag eller søndag) fra 'Date_of_Journey' som nye kolonner
     df['Journey_month'] = df['Date_of_Journey'].dt.month.astype('int64')
     df['Journey_day'] = df['Date_of_Journey'].dt.day.astype('int64')
     df['Journey_week'] = df['Date_of_Journey'].dt.isocalendar().week.astype('int64')
-
-    # Tilføjer kolonne der viser om rejsen er i weekenden
     df['Is_weekend'] = (df['Date_of_Journey'].dt.dayofweek >= 5).astype(int)
 
-    # Fjerner den oprindelige 'Date_of_Journey'-kolonne, da vi har ekstraheret de nødvendige oplysninger
+    # Fjerner 'Date_of_Journey', da nødvendige data nu er ekstraheret
     df.drop('Date_of_Journey', axis=1, inplace=True)
 
-    # Opdaterer 'Class'-kolonnen baseret på Airline kolonnen
+    # Opdaterer 'Class'-kolonnen ud fra indholdet i 'Airline' for at kategorisere klassen
+    # (dvs. grupperer klasserne i typer som Business, Premium economy eller Standard)
     df['Class'] = df['Airline'].apply(
         lambda x: 'Business' if 'Business' in x else (
             'Premium economy' if 'Premium economy' in x else 'Standard'))
 
-    # Konverterer 'object'-kolonner til 'string'
+    # Sikrer ens datatype ved at konvertere 'object'-kolonner til 'string'-kolonner
     for col in df.columns:
         if df[col].dtype == 'object':
             df[col] = df[col].astype('string')
 
-    # Konverterer klasser til numeriske værdier
+    # Gør 'Class' numerisk for brug i f.eks. korrelationsanalyse
     df['class_numb'] = df['Class'].map({
         'Standard': 0,
         'Premium economy': 1,
         'Business': 2,
     })
 
-    # Gør kolonnenavne små
+    # Gør kolonnenavne små for at sikre ensartethed, gøre dem nemmere at arbejde med og forbedre læsbarheden
     df.columns = [col.lower() for col in df.columns]
 
     return df
 
 def get_numeric_df_clean(df):
-    # One-hot encoding af de kategoriske kolonner
+    # One-hot encoder kategoriske kolonner så de kan bruges i modeller
     df_numeric = pd.get_dummies(df, columns=['airline', 'source_city', 'stops', 'destination_city', 'class'], dtype=pd.Int64Dtype())
     return df_numeric
 
 def get_numeric_df_train(df):
-    # One-hot encoding af de kategoriske kolonner
+    # One-hot encoder relevante kategoriske kolonner
     df_numeric = pd.get_dummies(df, columns=['airline', 'source', 'destination', 'class'], dtype=pd.Int64Dtype())
     return df_numeric
 
 def get_no_outliers_df_clean(df):
-    # Laver en kopi af DataFrame for at undgå at ændre originalen
+    # Kopierer data for ikke at ændre den originale DataFrame
     df_copy = df.copy()
 
-    # Anvender z-score metoden på 'price' og fjerner outliers fra listen
+    # Fjerner outliers i 'price' baseret på z-score-metoden (tærskel 3)
     clean_price_list = beregnListe(df_copy['price'].tolist(), tærskel=3.0, fjern=True)
 
-    # Filtrerer DataFrame så kun rækker med 'price' i clean_price_list inkluderes (ikke outliers)
+    # Udvælger kun rækker med 'price'-værdier, der ikke er outliers
     df_no_outliers_cleaned = df_copy[df_copy['price'].isin(clean_price_list)].copy()
 
+    # Returnerer DataFrame uden outliers og uden rækker med manglende 'price'-værdier
     return df_no_outliers_cleaned.dropna(subset=['price'])
 
 def get_no_outliers_df_train(df):
-    # Beregner IQR-grænser
+    # Kombinerer IQR- og z-score-metoder for en mere præcis og robust outlier-detektion
+
+    # Beregner grænser baseret på interkvartilafstand (IQR) for at fjerne ekstreme værdier
     Q1 = df['price'].quantile(0.25)
     Q3 = df['price'].quantile(0.75)
     IQR = Q3 - Q1
-
     lower_bound = Q1 - 1.5 * IQR
     upper_bound = Q3 + 1.5 * IQR
 
-    # Filtrerer efter IQR
+    # Fjerner outliers uden for IQR-intervallet
     df_iqr_filtered = df[(df['price'] >= lower_bound) & (df['price'] <= upper_bound)].copy()
 
-    # Beregner z-score (men fjerner ikke outliers endnu)
+    # Anvender z-score på det IQR-filtrerede datasæt for at identificere yderligere outliers
     beregnDataFrame(df_iqr_filtered[['price']], tærskel=3.0, fjern=False)
 
-    # Henter de identificerede outliers fra z-score analysen
+    # Henter listen over z-score-baserede outliers
     price_outliers = hentOutliers()
 
-    # Fjerner z-score outliers fra IQR-filtreret data
+    # Fjerner de identificerede z-score outliers
     df_no_outliers_train = df_iqr_filtered[~df_iqr_filtered['price'].isin(price_outliers)].copy()
 
+    # Returnerer renset DataFrame uden outliers og uden manglende 'price'-værdier
     return df_no_outliers_train.dropna(subset=['price'])
