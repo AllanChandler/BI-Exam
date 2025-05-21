@@ -36,7 +36,7 @@ Resultaterne vil kunne bruges af rejsende til at træffe bedre beslutninger og a
 2. Hvordan påvirker antallet af stop prisen?
 3. Hvordan varierer priserne afhængigt af rejsemåneden?
 4. Hvordan varierer priserne mellem standard og premium-versioner af samme flyselskab?
-5. Hvordan kan flyselskaber kategoriseres i grupper baseret på prisvariationer over rejsemåneden og forskelle mellem standard- og premiumversioner?
+5. Hvordan kan flyselskaber kategoriseres i grupper baseret på prisvariationer over rejsemåneden og forskelle mellem standard og premium-versioner?
 
 ## Hypoteser
 1. Prisen stiger, jo færre dage der er tilbage før afrejse.
