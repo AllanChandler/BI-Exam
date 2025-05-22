@@ -75,6 +75,15 @@ def load_data_train(path):
         'Business': 2,
     })
 
+    # Omdanner 'Airline' fra tekst til numerisk værdi i en ny kolonne 'airline_numb'
+    unique_airlines = df['Airline'].unique()
+
+    # Laver en dictionary til mapping, f.eks. 'airline_numb': 0, 1, 2 osv.
+    airline_mapping = {airline: i for i, airline in enumerate(unique_airlines)}
+
+    # Anvender mapping til at lave en ny numerisk kolonne
+    df['airline_numb'] = df['Airline'].map(airline_mapping)
+
     # Gør kolonnenavne små for at sikre ensartethed, gøre dem nemmere at arbejde med og forbedre læsbarheden
     df.columns = [col.lower() for col in df.columns]
 
