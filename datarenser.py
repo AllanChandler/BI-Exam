@@ -52,7 +52,7 @@ def load_data_train(path):
     df['Journey_month'] = df['Date_of_Journey'].dt.month.astype('int64')
     df['Journey_day'] = df['Date_of_Journey'].dt.day.astype('int64')
     df['Journey_week'] = df['Date_of_Journey'].dt.isocalendar().week.astype('int64')
-    df['Is_weekend'] = (df['Date_of_Journey'].dt.dayofweek >= 5).astype(int)
+    df['Is_weekend'] = (df['Date_of_Journey'].dt.dayofweek >= 5).astype('int64')
 
     # Fjerner 'Date_of_Journey', da nødvendige data nu er ekstraheret
     df.drop('Date_of_Journey', axis=1, inplace=True)
