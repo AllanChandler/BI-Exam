@@ -90,13 +90,23 @@ def load_data_train(path):
     return df
 
 def get_numeric_df_clean(df):
-    # One-hot encoder kategoriske kolonner så de kan bruges i modeller
-    df_numeric = pd.get_dummies(df, columns=['airline', 'source_city', 'stops', 'destination_city', 'class'], dtype=pd.Int64Dtype())
+    
+    # Vælger kun de relevante kolonner som bruges
+    df_relevant = df[['airline', 'stops', 'days_left', 'price']].copy()
+
+    # One-hot encoder kategoriske kolonner
+    df_numeric = pd.get_dummies(df_relevant, columns=['airline', 'stops'], dtype=pd.Int64Dtype())
+    
     return df_numeric
 
 def get_numeric_df_train(df):
-    # One-hot encoder relevante kategoriske kolonner
-    df_numeric = pd.get_dummies(df, columns=['airline', 'source', 'destination', 'class'], dtype=pd.Int64Dtype())
+    
+    # Vælger kun de relevante kolonner som bruges
+    df_relevant = df[['journey_month', 'journey_week', 'journey_day', 'is_weekend', 'airline', 'class', 'price']].copy()
+
+    # One-hot encoder kategoriske kolonner
+    df_numeric = pd.get_dummies(df_relevant, columns=['airline', 'class'], dtype=pd.Int64Dtype())
+
     return df_numeric
 
 def get_no_outliers_df_clean(df):
