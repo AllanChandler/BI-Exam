@@ -52,7 +52,7 @@ def load_data_train(path):
     df['Journey_month'] = df['Date_of_Journey'].dt.month.astype('int64')
     df['Journey_day'] = df['Date_of_Journey'].dt.day.astype('int64')
     df['Journey_week'] = df['Date_of_Journey'].dt.isocalendar().week.astype('int64')
-    df['Is_weekend'] = (df['Date_of_Journey'].dt.dayofweek >= 5).astype(int)
+    df['Is_weekend'] = (df['Date_of_Journey'].dt.dayofweek >= 5).astype('int64')
 
     # Fjerner 'Date_of_Journey', da nødvendige data nu er ekstraheret
     df.drop('Date_of_Journey', axis=1, inplace=True)
@@ -90,13 +90,23 @@ def load_data_train(path):
     return df
 
 def get_numeric_df_clean(df):
-    # One-hot encoder kategoriske kolonner så de kan bruges i modeller
-    df_numeric = pd.get_dummies(df, columns=['airline', 'source_city', 'stops', 'destination_city', 'class'], dtype=pd.Int64Dtype())
+    
+    # Vælger kun de relevante kolonner som bruges
+    df_relevant = df[['airline', 'stops', 'days_left', 'price']].copy()
+
+    # One-hot encoder kategoriske kolonner
+    df_numeric = pd.get_dummies(df_relevant, columns=['airline', 'stops'], dtype=pd.Int64Dtype())
+    
     return df_numeric
 
 def get_numeric_df_train(df):
-    # One-hot encoder relevante kategoriske kolonner
-    df_numeric = pd.get_dummies(df, columns=['airline', 'source', 'destination', 'class'], dtype=pd.Int64Dtype())
+    
+    # Vælger kun de relevante kolonner som bruges
+    df_relevant = df[['journey_month', 'journey_week', 'journey_day', 'is_weekend', 'airline', 'class', 'price']].copy()
+
+    # One-hot encoder kategoriske kolonner
+    df_numeric = pd.get_dummies(df_relevant, columns=['airline', 'class'], dtype=pd.Int64Dtype())
+
     return df_numeric
 
 def get_no_outliers_df_clean(df):
