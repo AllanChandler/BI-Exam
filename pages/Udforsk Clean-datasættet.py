@@ -11,7 +11,7 @@ import pandas as pd
 
 # Sideopsætning
 st.set_page_config(
-    page_title="Dataudforskning_Clean",
+    page_title="Udforsk Clean-datasættet",
     page_icon="🧊",
     layout="wide",
     initial_sidebar_state="expanded",

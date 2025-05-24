@@ -11,7 +11,7 @@ import pandas as pd
 
 # Sideopsætning
 st.set_page_config(
-    page_title="Dataudforskning_Train",
+    page_title="Udforsk Train-datasættet",
     page_icon="🧊",
     layout="wide",
     initial_sidebar_state="expanded",
