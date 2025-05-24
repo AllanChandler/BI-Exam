@@ -12,33 +12,38 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 import seaborn as sns
-import Input_Generator_Train as igt
+import Input_Generator_Clean as igc
 
+# Streamlit side-konfiguration
 st.set_page_config(
-    page_title="Prediction Med ML",
+    page_title="ML-forudsigelser for Clean-datasættet",
     page_icon="🧊",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# --- Session-state dataframes ---------------------------------------
-if 'dfTrain' not in st.session_state or 'dfTrain_numeric' not in st.session_state:
-    st.error("❗ Data mangler i session state: 'dfTrain' og 'dfTrain_numeric'. Sørg for at indlæse data først.")
-    st.stop()
+# Session-state check for nødvendige dataframes 
+if 'dfClean' not in st.session_state or 'dfClean_numeric' not in st.session_state:
+    st.error("❗ Data mangler i session state: 'dfClean' og 'dfClean_numeric'. Sørg for at indlæse data først.")
+    st.stop() # Stop appen hvis data ikke er klar
 
-df = st.session_state['dfTrain']
-dfNumeric = st.session_state['dfTrain_numeric']
+# Loader dataframes fra session state
+df = st.session_state['dfClean']
+dfNumeric = st.session_state['dfClean_numeric']
+
+# Fjerner 'price' fra data til clustering og klassifikation 
 dfCluster = dfNumeric.drop(['price'], axis=1)
 dfClassification = dfNumeric.copy().drop(['price'], axis=1)
 
-# --- Opret pris-klasser med qcut til klassifikationens labels ---
+# Opret pris-klasser vha. qcut for klassifikation 
 try:
-    price_classes = pd.qcut(dfNumeric['price'], q=5, duplicates='drop')
-    price_intervals = price_classes.cat.categories
+    price_classes = pd.qcut(dfNumeric['price'], q=5, duplicates='drop') # Deler prisen i 5 kvantiler (pris-klasser)
+    price_intervals = price_classes.cat.categories # Gemmer interval-bounds for visning
 except Exception as e:
     st.error(f"Fejl ved oprettelse af pris-klasser: {e}")
     st.stop()
 
+# Initialisering af model-objekter
 regression = None
 classification = None
 kmeans = None
@@ -46,99 +51,112 @@ kmeans = None
 try:
     st.warning("🔄 Træner/indlæser modeller...")
 
-    # --- Regression --------------------------------------------------
-    if glob.glob("regression.pkl"):
-        regression = pickle.load(open("regression.pkl", "rb"))
-        if 'X_test_reg' not in st.session_state or 'y_test_reg' not in st.session_state:
+    # Regression model træning/indlæsning 
+    if glob.glob("regression_Clean.pkl"):
+
+        # Hvis model findes, load den
+        regression = pickle.load(open("regression_Clean.pkl", "rb"))
+
+        # Hvis testdata ikke findes i session, opret dem
+        if 'X_test_reg_Clean' not in st.session_state or 'y_test_reg_Clean' not in st.session_state:
             X, y = dfNumeric.drop('price', axis=1), dfNumeric['price']
             _, X_test, _, y_test = train_test_split(X, y, test_size=0.25, random_state=83)
-            st.session_state['X_test_reg'] = X_test
-            st.session_state['y_test_reg'] = y_test
+            st.session_state['X_test_reg_Clean'] = X_test
+            st.session_state['y_test_reg_Clean'] = y_test
     else:
+        # Hvis ingen model, split data og træn ny RandomForestRegressor
         X, y = dfNumeric.drop('price', axis=1), dfNumeric['price']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=83)
         regression = RandomForestRegressor(n_estimators=50, random_state=116)
         regression.fit(X_train, y_train)
-        pickle.dump(regression, open("regression.pkl", "wb"))
-        st.session_state['X_test_reg'] = X_test
-        st.session_state['y_test_reg'] = y_test
+        pickle.dump(regression, open("regression_Clean.pkl", "wb"))
+        st.session_state['X_test_reg_Clean'] = X_test
+        st.session_state['y_test_reg_Clean'] = y_test
 
-    # --- Clustering --------------------------------------------------
-    if glob.glob("cluster.pkl") and glob.glob("data/cluster.csv"):
-        kmeans = pickle.load(open("cluster.pkl", "rb"))
-        rowCluster = pd.read_csv("data/cluster.csv")
+    # Clustering model træning/indlæsning
+    if glob.glob("cluster_Clean.pkl"):
+
+        # Loader kmeans model og tilhørende cluster labels hvis findes
+        kmeans = pickle.load(open("cluster_Clean.pkl", "rb"))
+        rowCluster = pd.read_csv("cluster_Clean.csv")
     else:
+        # Ellers træn kmeans med valgt antal klynger (9)
         antal_klynger = 9
         kmeans = KMeans(init='k-means++', n_clusters=antal_klynger, n_init=10, random_state=42)
         clusters = kmeans.fit_predict(dfCluster)
         rowCluster = pd.DataFrame(clusters, columns=['cluster'])
-        rowCluster.to_csv("data/cluster.csv", index=False)
-        pickle.dump(kmeans, open("cluster.pkl", "wb"))
+        rowCluster.to_csv("cluster_Clean.csv", index=False)  # Gemmer labels
+        pickle.dump(kmeans, open("cluster_Clean.pkl", "wb"))  # Gemmer model
 
-    # --- Klassifikation ----------------------------------------------
+    # Klassifikation model træning/indlæsning ---
+    # Tilføjer cluster kolonnen til klassifikationsdata
     dfClassification['cluster'] = rowCluster['cluster']
 
-    if glob.glob("classification.pkl"):
-        classification = pickle.load(open("classification.pkl", "rb"))
-        if 'Xc_test' not in st.session_state or 'yc_test' not in st.session_state:
+    if glob.glob("classification_Clean.pkl"):
+        classification = pickle.load(open("classification_Clean.pkl", "rb"))
+        if 'Xc_test_Clean' not in st.session_state or 'yc_test_Clean' not in st.session_state:
             Xc, yc = dfClassification, price_classes.cat.codes
             _, Xc_test, _, yc_test = train_test_split(Xc, yc, test_size=0.2, random_state=88)
-            st.session_state['Xc_test'] = Xc_test
-            st.session_state['yc_test'] = yc_test
+            st.session_state['Xc_test_Clean'] = Xc_test
+            st.session_state['yc_test_Clean'] = yc_test
     else:
         Xc, yc = dfClassification, price_classes.cat.codes
         Xc_train, Xc_test, yc_train, yc_test = train_test_split(Xc, yc, test_size=0.2, random_state=88)
         classification = DecisionTreeClassifier(random_state=10)
         classification.fit(Xc_train, yc_train)
-        pickle.dump(classification, open("classification.pkl", "wb"))
-        st.session_state['Xc_test'] = Xc_test
-        st.session_state['yc_test'] = yc_test
+        pickle.dump(classification, open("classification_Clean.pkl", "wb"))
+        st.session_state['Xc_test_Clean'] = Xc_test
+        st.session_state['yc_test_Clean'] = yc_test
 
 except Exception as e:
     st.error(f"❌ Model-fejl: {e}")
     st.stop()
 
-# Bruges til clustering og score plots
+# Bruges i clustering silhouette plot
 X = dfCluster.copy()
 
-# --- UI Tabs --------------------------------------------------------
-tab1, tab2, tab3, tab4 = st.tabs(["Om", "Regression", "Klyngedannelse", "Klassifikation"])
+# Streamlit UI med faner 
+tab1, tab2, tab3, tab4 = st.tabs(["Om", "Regression", "Clustering", "Classification"])
 
 with tab1:
     st.title("Om")
     st.write("Hver fane indeholder en trænet model klar til at lave forudsigelser.")
     st.write("Nedenfor vises et lille uddrag af dataet med den beregnede klynge:")
     df['cluster'] = rowCluster['cluster']
-    kolonner = ['airline', 'class', 'price', 'journey_month', 'journey_week', 'journey_day', 'is_weekend', 'cluster']
+    kolonner = ['airline', 'price', 'stops', 'days_left', 'cluster']
     st.dataframe(df[kolonner].head())
 
 with tab2:
-    st.title("Regression med Random Forest")
+    st.title("Regression")
 
     st.write(
-        "Denne regressionsmodel anvender rejsemåned, uge, dag, weekendstatus, flyselskab og rejseklasse som input for at forudsige "
+        "Denne Random Forest Regression model anvender flyselskab, stops og dage tilbage som input for at forudsige "
         "prisen på en rejse. Modellen estimerer en konkret prisværdi, der kan bruges til at danne en forventning om rejseomkostningerne."
     )
 
-    jm = st.selectbox("Rejsemåned", sorted(df['journey_month'].unique()))
-    jw = st.selectbox("Rejseuge", sorted(df['journey_week'].unique()))
-    jd = st.selectbox("Rejsedag", sorted(df['journey_day'].unique()))
-    iw = st.selectbox("Er det weekend?", [0, 1])
-    al = st.selectbox("Flyselskab", df['airline'].unique())
-    fc = st.selectbox("Rejseklasse", df['class'].unique())
+    st.write(
+    "Vi anvender Random Forest Regressor fremfor andre regressorer, da det er en robust og nøjagtig algoritme. "
+    "Algoritmen bygger på mange træer, som sammen bidrager til en mere præcis og pålidelig forudsigelse end mange andre modeller."
+    )
 
+    # Brugervalg til inputvariable baseret på kolonnerne
+    al = st.selectbox("Flyselskab", sorted(df['airline'].unique()), key="reg_airline")
+    stops = st.selectbox("Antal stop", sorted(df['stops'].unique()), key="reg_stops")
+    dl = st.number_input("Dage tilbage til afrejse", min_value=0, value=int(df['days_left'].median()), key="reg_days_left")
+
+    # Knappen til at lave forudsigelse
     if st.button("Forudsig pris", key="regression_button"):
-        inp = igt.create_input_row(jm, jw, jd, iw, al, fc, dfNumeric.drop('price', axis=1).columns)
+        inp = igc.create_input_row(al, stops, dl, dfNumeric.drop('price', axis=1).columns)
         pred = regression.predict(inp)[0]
         st.success(f"Forudsagt pris: {pred:.2f} kr.")
 
-
-    if 'X_test_reg' in st.session_state and 'y_test_reg' in st.session_state:
-        y_pred = regression.predict(st.session_state['X_test_reg'])
-        mse = mean_squared_error(st.session_state['y_test_reg'], y_pred)
+    # Viser modelperformance metrics på testdata
+    if 'X_test_reg_Clean' in st.session_state and 'y_test_reg_Clean' in st.session_state:
+        y_pred = regression.predict(st.session_state['X_test_reg_Clean'])
+        mse = mean_squared_error(st.session_state['y_test_reg_Clean'], y_pred)
         rmse = np.sqrt(mse)
-        mae = mean_absolute_error(st.session_state['y_test_reg'], y_pred)
-        r2 = r2_score(st.session_state['y_test_reg'], y_pred)
+        mae = mean_absolute_error(st.session_state['y_test_reg_Clean'], y_pred)
+        r2 = r2_score(st.session_state['y_test_reg_Clean'], y_pred)
 
         st.subheader("Model Performance Metrics")
         st.write(f"MSE: {mse:.2f}")
@@ -148,6 +166,7 @@ with tab2:
 
         st.title("Regression analyse")
 
+        # Forklaring af metrics
         st.write(f"""
 
         - **MSE (Mean Squared Error):** Måler den gennemsnitlige kvadrerede fejl mellem de forudsagte og faktiske værdier. En MSE på **{mse:,.2f}** indikerer, at der stadig er betydelige fejl især store afvigelser vægtes tungt.
@@ -163,26 +182,32 @@ with tab2:
 
 
 with tab3:
-    st.title("Klyngedannelse med K-Means")
+    st.title("Clustering")
 
     st.write(
-        "Denne klyngemodel bruger K-Means clustering til at gruppere rejser baseret på rejsemåned, uge, dag, weekendstatus, "
+        "Denne clustering model bruger K-Means clustering til at gruppere rejser baseret på rejsemåned, uge, dag, weekendstatus, "
         "flyselskab, rejseklasse og pris. Formålet er at identificere naturlige grupperinger i data for bedre indsigt."
     )
 
-    jm = st.selectbox("Rejsemåned", sorted(df['journey_month'].unique()), key="cjm")
-    jw = st.selectbox("Rejseuge", sorted(df['journey_week'].unique()), key="cjw")
-    jd = st.selectbox("Rejsedag", sorted(df['journey_day'].unique()), key="cjd")
-    iw = st.selectbox("Er det weekend?", [0, 1], key="ciw")
-    al = st.selectbox("Flyselskab", df['airline'].unique(), key="cal")
-    fc = st.selectbox("Rejseklasse", df['class'].unique(), key="cfc")
-    price = st.number_input("Pris", min_value=0.0, format="%.2f", key="cprice")
+    st.write(
+    "Vi har valgt K-Means, fordi det er en enkel og effektiv algoritme, som samtidig gør det let at forstå resultaterne. "
+    "Algoritmen deler dataene op i klynger, hvor hver klynge har sit eget centrum. "
+    "Selvom datasættet ikke er særligt stort, kunne vi også have brugt Hierarkisk Klyngedannelse. "
+    "Men en stor fordel ved K-Means er, at vi selv kan bestemme antallet af klynger."
+    )
+
+    # Brugervalg til inputvariabler inkl. pris for clustering
+    al = st.selectbox("Flyselskab", sorted(df['airline'].unique()), key="clust_airline")
+    stops = st.selectbox("Antal stop", sorted(df['stops'].unique()), key="clust_stops")
+    dl = st.number_input("Dage tilbage til afrejse", min_value=0, value=int(df['days_left'].median()), key="clust_days_left")
+    price = st.number_input("Pris", min_value=0.0, format="%.2f", key="clust_price")
 
     if st.button("Forudsig klynge", key="cluster_button"):
-        inp = igt.createNewRow(jm, jw, jd, iw, al, fc, price, dfCluster)
+        inp = igc.createNewRow(al, stops, dl, price, dfCluster)
         label = kmeans.predict(inp)[0]
         st.success(f"Klynge: {label}")
 
+    # Visualisering af clusters via silhouette plot
     st.subheader("Silhouette Plot")
 
     cluster_labels = kmeans.labels_
@@ -226,7 +251,7 @@ with tab3:
         - Tæt på 0 indikerer, at datapunkterne ligger tæt på grænsen mellem to klynger, og klyngeopdelingen derfor er mindre tydelig.
         - Under 0 betyder, at datapunkterne muligvis er forkert klassificeret.
 
-        En score på omkring 0.40 tyder på, at klyngerne har en nogenlunde klar adskillelse, men der er stadig overlap og mulighed for forbedring. Det kan være acceptabelt i komplekse eller virkelighedsnære data, hvor klare grænser mellem klynger ikke altid findes.
+        En score på omkring 0.41 tyder på, at klyngerne har en nogenlunde klar adskillelse, men der er stadig overlap og mulighed for forbedring. Det kan være acceptabelt i komplekse eller virkelighedsnære data, hvor klare grænser mellem klynger ikke altid findes.
         """
     )
 
@@ -261,7 +286,7 @@ with tab3:
         plt.title("Elbow Metode")
         st.pyplot(plot2)
 
-    st.title("Klynge analyse")
+    st.title("Clustering analyse")
 
     # Dynamisk analyse tekst baseret på Silhouette score og Elbow metode
     optimal_k = krækkevidde[np.argmax(scores)]
@@ -289,27 +314,28 @@ with tab3:
     )
 
 with tab4:
-    st.title("Beslutningstræ Klassifikation")
+    st.title("Classification")
 
     st.write(
-        "Denne klassifikationsmodel bruges til at forudsige pris-klassen for en ny observation baseret på den klynge, "
+        "Denne Classificationmodel baseret på DecisionTreeClassifier bruges til at forudsige pris-klassen for en ny observation baseret på den klynge, "
         "den tilhører. Modellen er trænet med prisen som afhængig variabel, hvor alle andre datafelter fungerer som uafhængige variable. "
         "Formålet er at estimere et sandsynligt prisinterval for den givne kombination af rejseparametre."
     )
 
-    jm = st.selectbox("Rejsemåned", sorted(df['journey_month'].unique()), key="cl_jm")
-    jw = st.selectbox("Rejseuge", sorted(df['journey_week'].unique()), key="cl_jw")
-    jd = st.selectbox("Rejsedag", sorted(df['journey_day'].unique()), key="cl_jd")
-    iw = st.selectbox("Er det weekend?", [0, 1], key="cl_iw")
-    al = st.selectbox("Flyselskab", df['airline'].unique(), key="cl_al")
-    fc = st.selectbox("Rejseklasse", df['class'].unique(), key="cl_fc")
-    ci = st.selectbox("Klynge", sorted(dfClassification['cluster'].unique()), key="cl_ci")
+    st.write(
+        "Vi bruger DecisionTreeClassifier, fordi det er en simpel og effektiv algoritme, som både håndterer komplekse data og giver let forståelige resultater. "
+        "Den kan håndtere både numeriske og kategoriske variable uden behov for omfattende dataforberedelse, og træerne kan visualiseres for bedre indsigt."
+    )
+
+    # Brugervalg til klassifikation (match input til createNewClassRow)
+    al = st.selectbox("Flyselskab", sorted(df['airline'].unique()), key="class_airline")
+    stops = st.selectbox("Antal stop", sorted(df['stops'].unique()), key="class_stops")
+    dl = st.number_input("Dage tilbage til afrejse", min_value=0, value=int(df['days_left'].median()), key="class_days_left")
+    ci = st.selectbox("Klynge", sorted(dfClassification['cluster'].unique()), key="class_cluster")
 
     if st.button("Forudsig pris-klasse", key="classification_button"):
-        inp = igt.create_input_row(jm, jw, jd, iw, al, fc, dfNumeric.drop('price', axis=1).columns)
-        
-        # Tilføj cluster info til input til klassifikationsmodel
-        inp['cluster'] = ci
+        # Kald createNewClassRow med de korrekte parametre
+        inp = igc.createNewClassRow(al, stops, dl, ci, dfClassification)
 
         # Sørg for at input har samme kolonner som træningsdata til klassifikation
         inp_class = inp[dfClassification.columns]
@@ -324,10 +350,11 @@ with tab4:
 
         st.success(f"Forudsagt pris-klasse: {prediction} svarer til intervallet {interval_str}")
 
-        if 'Xc_test' in st.session_state and 'yc_test' in st.session_state:
-            y_test_pred = classification.predict(st.session_state['Xc_test'])
-            acc = accuracy_score(st.session_state['yc_test'], y_test_pred)
-            cmatrix = confusion_matrix(st.session_state['yc_test'], y_test_pred)
+        # Evalueringsmatrix
+        if 'Xc_test_Clean' in st.session_state and 'yc_test_Clean' in st.session_state:
+            y_test_pred = classification.predict(st.session_state['Xc_test_Clean'])
+            acc = accuracy_score(st.session_state['yc_test_Clean'], y_test_pred)
+            cmatrix = confusion_matrix(st.session_state['yc_test_Clean'], y_test_pred)
 
             st.write(f"Model Accuracy: {acc:.2f}")
             fig, ax = plt.subplots()
@@ -336,7 +363,7 @@ with tab4:
             ax.set_ylabel('Sand')
             st.pyplot(fig)
 
-            st.title("Klassifikation analyse")
+            st.title("Classification analyse")
 
             st.write(
                 f"Modellen opnår en accuracy på {acc:.2f}, hvilket betyder, at den korrekt klassificerer prisgrupperne lidt mere end halvdelen af gangene. "
@@ -345,13 +372,14 @@ with tab4:
 
             st.write(
             """
-            Confusion matrixen viser, hvordan klassifikationsmodellen præsterer på testdata ved at sammenligne de sande pris-klasser med de forudsagte.
+            **Confusion matrixen** viser, hvordan klassifikationsmodellen præsterer på testdata ved at sammenligne de *sande pris-klasser* med de *forudsagte*.
 
-            - Diagonalværdierne (fx 263 for klasse 0, 193 for klasse 1 osv.) viser antallet af korrekt klassificerede observationer i hver pris-klasse.
-            - Tal uden for diagonalen viser fejlklassifikationer, dvs. observationer, der blev forudsagt til en forkert pris-klasse.
-            - For eksempel bliver 51 observationer, som i virkeligheden tilhører klasse 0, fejlagtigt forudsagt som klasse 1.
-            - Modellen klarer sig bedst for klasse 0 og klasse 4, hvor mange observationer klassificeres korrekt.
-            - For klasser midt i skalaen (2 og 3) ses flere fejlklassifikationer, hvilket tyder på, at modellen har sværere ved at skelne mellem nærtliggende prisintervaller.
+            - **Diagonalværdierne** (fx 191 for klasse 0, 136 for klasse 1 osv.) viser antallet af korrekt klassificerede observationer i hver pris-klasse.  
+            - **Tal uden for diagonalen** viser fejlklassifikationer, dvs. observationer der blev forudsagt til en forkert pris-klasse.
+
+            For eksempel bliver **83 observationer**, som i virkeligheden tilhører klasse 0, fejlagtigt forudsagt som klasse 1.
+
+            Modellen klarer sig bedst for **klasse 0** og **klasse 4**, hvor flest observationer klassificeres korrekt.  
+            For klasser midt i skalaen (**klasse 2** og **klasse 3**) ses flere fejlklassifikationer, hvilket tyder på, at modellen har sværere ved at skelne mellem nærtliggende prisintervaller.
             """
             )
-
