@@ -10,12 +10,11 @@ st.set_page_config(layout="wide")
 st.title("✈️ Hvordan varierer priserne mellem standard og premium-versioner af samme flyselskab?")
 
 # --- Session-state dataframes ---------------------------------------
-if 'dfTrain' not in st.session_state or 'dfTrain_numeric' not in st.session_state:
-    st.error("❗ Data mangler i session state: 'dfTrain' og 'dfTrain_numeric'. Sørg for at indlæse data først.")
+if 'dfTrain' not in st.session_state:
+    st.error("❗ Data mangler i session state: 'dfTrain'. Sørg for at indlæse data først.")
     st.stop()
 
 df = st.session_state['dfTrain']
-dfNumeric = st.session_state['dfTrain_numeric']
 df_clean = get_no_outliers_df_train(df)
 
 # --------------------------
@@ -26,7 +25,7 @@ if st.checkbox("Vis et udsnit af data"):
     st.dataframe(df.sample(5))
 
 if st.checkbox("Grundlæggende statistik"):
-    st.write(df.describe())
+    st.write(df[["price", "class_numb"]].describe())
 
 st.subheader("📊 Visualiseringer fra analysen")   
 
