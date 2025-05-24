@@ -32,9 +32,9 @@ if st.checkbox("Vis et udsnit af data"):
     st.dataframe(df.sample(5))
 
 if st.checkbox("Grundlæggende statistik"):
-    st.write(df.describe())
+    st.write(df[["price", "stops_numb"]].describe())
 
-    
+   
 st.subheader("📊 Visualiseringer fra analysen")
 
 
