@@ -31,7 +31,7 @@ if st.checkbox("Vis et udsnit af data"):
     st.dataframe(df.sample(5))
 
 if st.checkbox("Grundlæggende statistik"):
-    st.write(df[["price", "days_until_departure"]].describe())
+    st.write(df[["price", "days_left"]].describe())
 
 st.subheader("📊 Visualiseringer fra analysen")
 
@@ -51,11 +51,11 @@ if st.checkbox("Vis histogram med skævhed og kurtosis"):
     st.write(f"**Kurtosis:** {price_kurt:.3f}")
 
 if st.checkbox("Vis korrelation mellem antal dage til afrejse og pris"):
-    if 'days_until_departure' in df.columns and 'price' in df.columns:
+    if 'days_left' in df.columns and 'price' in df.columns:
         st.subheader("📈 Korrelation: Antal dage til afrejse vs. Pris")
 
         # Beregn korrelation
-        corr = df[['days_until_departure', 'price']].corr()
+        corr = df[['days_left', 'price']].corr()
 
         # Vis korrelationstabel
         st.write("Korrelationsmatrix:")
@@ -69,7 +69,7 @@ if st.checkbox("Vis korrelation mellem antal dage til afrejse og pris"):
 
 if st.checkbox("Vis scatter plot: Antal dage til afrejse vs. Pris"):
     fig2, ax2 = plt.subplots()
-    ax2.scatter(df['days_until_departure'], df['price'], alpha=0.3)
+    ax2.scatter(df['days_left'], df['price'], alpha=0.3)
     ax2.set_title("Sammenhæng mellem antal dage til afrejse og pris")
     ax2.set_xlabel("Antal dage til afrejse")
     ax2.set_ylabel("Pris")
