@@ -47,6 +47,7 @@ Resultaterne vil kunne bruges af rejsende til at træffe bedre beslutninger og a
 
 ## User Testing
 Vi har gennemført en brugertest med en bruger, som gav os konstruktiv feedback til forbedring af vores applikation. For eksempel kommenterede brugeren på, hvordan vi beskrev vores modeller, og gav også gode forslag til, hvordan vi kunne omplacere elementer i applikationen, så den bliver mere brugervenlig.
+På baggrund af denne feedback har vi justeret modelbeskrivelserne for at gøre dem mere klare og tilføjet bedre navigation og layoutændringer i applikationen for at øge brugervenligheden.
    
 ## Datasæt:
 
