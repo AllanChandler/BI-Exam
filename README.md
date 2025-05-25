@@ -44,6 +44,9 @@ Resultaterne vil kunne bruges af rejsende til at træffe bedre beslutninger og a
 3. Priserne varierer med rejsemåneden, hvor højsæson (f.eks. juli) medfører højere priser end lavsæson.
 4. Premium-versioner som Business og Premium Economy af samme flyselskab har en højere pris end standard-versioner.
 5. Flyselskaber kan kategoriseres i grupper baseret på prisvariationer over rejsemåneden, hvor priserne generelt stiger i højsæsonen, samt forskelle mellem standard og premium-versioner, hvor premium-versioner forventes at have markant højere priser end standardklassen.
+
+## User Testing
+Vi har gennemført en brugertest med en bruger, som gav os konstruktiv feedback til forbedring af vores applikation. For eksempel kommenterede brugeren på, hvordan vi beskrev vores modeller, og gav også gode forslag til, hvordan vi kunne omplacere elementer i applikationen, så den bliver mere brugervenlig.
    
 ## Datasæt:
 
