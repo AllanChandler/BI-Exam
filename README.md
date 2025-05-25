@@ -62,4 +62,4 @@ Start applikationen med denne kommando:
 ```bash
 streamlit run app.py
 ```
-Desværre har vi ikke en krav.txt-fil, så du bliver nødt til at installere de nødvendige pakker manuelt, hvis du støder på fejl.
+Desværre har vi ikke en requirements.txt-fil, så du bliver nødt til at installere de nødvendige pakker manuelt, hvis du støder på fejl.
