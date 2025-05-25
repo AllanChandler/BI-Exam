@@ -23,7 +23,7 @@ else:
     st.stop()
 
 # Input: Hvor mange dage til afrejse
-days_until_departure = st.slider("Hvor mange dage er der til afrejse?", min_value=0, max_value=365, value=30)
+days_left = st.slider("Hvor mange dage er der til afrejse?", min_value=0, max_value=365, value=30)
 
 # VISNING OG VISUALISERING
 st.subheader("🔍 Datavisning")
