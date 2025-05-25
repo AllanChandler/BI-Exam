@@ -36,7 +36,6 @@ def encode_categorical(inputs, df_columns, prefixes, values):
 
     return inputs  # Returner den opdaterede input-dictionary
 
-
 # Funktion 2: create_input_row
 # Genererer en inputrække til prisforudsigelse via regression – uden pris og cluster i input.
 def create_input_row(journey_month, journey_week, journey_day, is_weekend, airline, flight_class, df_columns):

@@ -24,7 +24,7 @@ st.set_page_config(
 
 # Session-state check for nødvendige dataframes 
 if 'dfTrain' not in st.session_state or 'dfTrain_numeric' not in st.session_state:
-    st.error("❗ Data mangler i session state: 'dfTrain' og 'dfTrain_numeric'. Sørg for at indlæse data først.")
+    st.error("Data mangler i session state: 'dfTrain' og 'dfTrain_numeric'. Sørg for at indlæse data først.")
     st.stop() # Stop appen hvis data ikke er klar
 
 # Loader dataframes fra session state
@@ -49,7 +49,7 @@ classification = None
 kmeans = None
 
 try:
-    st.warning("🔄 Træner/indlæser modeller...")
+    st.warning("Træner/indlæser modeller...")
 
     # Regression model træning/indlæsning 
     if glob.glob("regression_Train.pkl"):
@@ -109,7 +109,7 @@ try:
         st.session_state['yc_test_Train'] = yc_test
 
 except Exception as e:
-    st.error(f"❌ Model-fejl: {e}")
+    st.error(f"Model-fejl: {e}")
     st.stop()
 
 # Bruges i clustering silhouette plot
@@ -380,7 +380,7 @@ with tab4:
             st.title("Classification analyse")
 
             st.write(
-                f"Modellen opnår en accuracy på {acc:.2f}, hvilket betyder, at den korrekt klassificerer prisgrupperne lidt mere end halvdelen af gangene. "
+                f"Modellen opnår en accuracy på {acc:.2f}, hvilket betyder, at den korrekt klassificerer prisgrupperne lidt under halvdelen af gangene. Dette indikerer, at der stadig er plads til forbedringer, især når prisintervallerne ligger tæt på hinanden. "
                 "Dette indikerer, at der stadig er plads til forbedringer, især når prisintervallerne ligger tæt på hinanden."
             )
 

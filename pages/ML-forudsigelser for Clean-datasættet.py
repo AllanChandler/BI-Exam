@@ -24,12 +24,17 @@ st.set_page_config(
 
 # Session-state check for nødvendige dataframes 
 if 'dfClean' not in st.session_state or 'dfClean_numeric' not in st.session_state:
-    st.error("❗ Data mangler i session state: 'dfClean' og 'dfClean_numeric'. Sørg for at indlæse data først.")
+    st.error("Data mangler i session state: 'dfClean' og 'dfClean_numeric'. Sørg for at indlæse data først.")
     st.stop() # Stop appen hvis data ikke er klar
 
-# Loader dataframes fra session state
-df = st.session_state['dfClean']
-dfNumeric = st.session_state['dfClean_numeric']
+# Loader dataframes fra session state.
+# Af hensyn til ydeevne og hukommelsesforbrug er datasættet begrænset til et repræsentativt udsnit på 8.683 rækker 
+# ud af de oprindelige over 300.000. Dette sikrer hurtigere indlæsning, reduceret ventetid og en mere responsiv brugeroplevelse. 
+# Det har dog den ulempe, at modellens nøjagtighed kan være lidt lavere end ved brug af hele datasættet.
+# Ideelt kunne modellerne indlæses en gang og genbruges direkte, men denne optimering nåede jeg ikke at implementere.
+sample_idx = st.session_state['dfClean'].sample(n=8683, random_state=42).index
+df = st.session_state['dfClean'].loc[sample_idx]
+dfNumeric = st.session_state['dfClean_numeric'].loc[sample_idx]
 
 # Fjerner 'price' fra data til clustering og klassifikation 
 dfCluster = dfNumeric.drop(['price'], axis=1)
@@ -49,22 +54,17 @@ classification = None
 kmeans = None
 
 try:
-    st.warning("🔄 Træner/indlæser modeller...")
+    st.warning("Træner/indlæser modeller...")
 
-    # Regression model træning/indlæsning 
+    # === REGRESSION ===
     if glob.glob("regression_Clean.pkl"):
-
-        # Hvis model findes, load den
         regression = pickle.load(open("regression_Clean.pkl", "rb"))
-
-        # Hvis testdata ikke findes i session, opret dem
         if 'X_test_reg_Clean' not in st.session_state or 'y_test_reg_Clean' not in st.session_state:
             X, y = dfNumeric.drop('price', axis=1), dfNumeric['price']
             _, X_test, _, y_test = train_test_split(X, y, test_size=0.25, random_state=83)
             st.session_state['X_test_reg_Clean'] = X_test
             st.session_state['y_test_reg_Clean'] = y_test
     else:
-        # Hvis ingen model, split data og træn ny RandomForestRegressor
         X, y = dfNumeric.drop('price', axis=1), dfNumeric['price']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=83)
         regression = RandomForestRegressor(n_estimators=50, random_state=116)
@@ -73,25 +73,21 @@ try:
         st.session_state['X_test_reg_Clean'] = X_test
         st.session_state['y_test_reg_Clean'] = y_test
 
-    # Clustering model træning/indlæsning
-    if glob.glob("cluster_Clean.pkl"):
-
-        # Loader kmeans model og tilhørende cluster labels hvis findes
+    # === CLUSTERING ===
+    if glob.glob("cluster_Clean.pkl") and glob.glob("cluster_Clean.csv"):
         kmeans = pickle.load(open("cluster_Clean.pkl", "rb"))
-        rowCluster = pd.read_csv("cluster_Clean.csv")
+        rowCluster = pd.read_csv("cluster_Clean.csv", index_col=0)
     else:
-        # Ellers træn kmeans med valgt antal klynger (9)
         antal_klynger = 9
         kmeans = KMeans(init='k-means++', n_clusters=antal_klynger, n_init=10, random_state=42)
         clusters = kmeans.fit_predict(dfCluster)
-        rowCluster = pd.DataFrame(clusters, columns=['cluster'])
-        rowCluster.to_csv("cluster_Clean.csv", index=False)  # Gemmer labels
-        pickle.dump(kmeans, open("cluster_Clean.pkl", "wb"))  # Gemmer model
+        rowCluster = pd.DataFrame(clusters, index=dfCluster.index, columns=['cluster'])
+        rowCluster.to_csv("cluster_Clean.csv", index=True)
+        pickle.dump(kmeans, open("cluster_Clean.pkl", "wb"))
 
-    # Klassifikation model træning/indlæsning ---
-    # Tilføjer cluster kolonnen til klassifikationsdata
     dfClassification['cluster'] = rowCluster['cluster']
 
+    # === CLASSIFICATION ===
     if glob.glob("classification_Clean.pkl"):
         classification = pickle.load(open("classification_Clean.pkl", "rb"))
         if 'Xc_test_Clean' not in st.session_state or 'yc_test_Clean' not in st.session_state:
@@ -109,8 +105,10 @@ try:
         st.session_state['yc_test_Clean'] = yc_test
 
 except Exception as e:
-    st.error(f"❌ Model-fejl: {e}")
+    st.error(f"Model-fejl: {e}")
     st.stop()
+
+# Herefter kan du bruge rowCluster, regression og classification som før…
 
 # Bruges i clustering silhouette plot
 X = dfCluster.copy()
@@ -169,16 +167,16 @@ with tab2:
         # Forklaring af metrics
         st.write(f"""
 
-        - **MSE (Mean Squared Error):** Måler den gennemsnitlige kvadrerede fejl mellem de forudsagte og faktiske værdier. En MSE på **{mse:,.2f}** indikerer, at der stadig er betydelige fejl især store afvigelser vægtes tungt.
+        - **MSE (Mean Squared Error):** Måler den gennemsnitlige kvadrerede fejl mellem de forudsagte og faktiske værdier. En MSE på **{mse:,.2f}** indikerer, at der stadig er betydelige fejl, hvor især store afvigelser vægtes tungt.
 
-        - **RMSE (Root Mean Squared Error):** Kvadratroden af MSE og udtrykt i samme enhed som målet (pris). En RMSE på **{rmse:,.2f}** betyder, at de gennemsnitlige afvigelser fra faktiske priser er cirka **{rmse:,.0f}**
+        - **RMSE (Root Mean Squared Error):** Kvadratroden af MSE og udtrykt i samme enhed som målet (pris). En RMSE på **{rmse:,.2f}** betyder, at de gennemsnitlige afvigelser fra faktiske priser er cirka **{rmse:,.0f}**.
 
-        - **MAE (Mean Absolute Error):** Giver gennemsnittet af de absolutte fejl uden at forstærke ekstreme outliers. En MAE på **{mae:,.2f}** viser, at modellen i gennemsnit afviger med ca. **{mae:,.0f}**, hvilket er ret præcist.
+        - **MAE (Mean Absolute Error):** Giver gennemsnittet af de absolutte fejl uden at forstærke ekstreme outliers. En MAE på **{mae:,.2f}** viser, at modellen i gennemsnit afviger med ca. **{mae:,.0f}**, hvilket giver et ret præcist billede af fejlmargenen.
 
-        - **R² (Determinationskoefficient):** Viser hvor stor en andel af variationen i data modellen kan forklare. En værdi på **{r2:.2f}** betyder, at modellen forklarer **{r2*100:.0f}%** af prisvariationen hvilket er en god forklaringsgrad.
+        - **R² (Determinationskoefficient):** Viser hvor stor en andel af variationen i data modellen kan forklare. En værdi på **{r2:.2f}** betyder, at modellen kun forklarer omkring **{r2*100:.0f}%** af prisvariationen, hvilket antyder, at der er mange andre faktorer, som ikke fanges af modellen.
         """)
 
-        st.write(f"Modellen har en solid præcision med en RMSE på **{rmse:,.2f}** og forklarer **{r2*100:.0f}%** af variationen i priserne.")
+        st.write(f"Modellen har en relativt begrænset forklaringsgrad med en RMSE på **{rmse:,.2f}** og forklarer kun **{r2*100:.0f}%** af variationen i priserne.")
 
 
 with tab3:
@@ -245,13 +243,13 @@ with tab3:
 
     st.write(
         """
-        Silhouette scoren er et mål for, hvor godt data er opdelt i klynger. Den varierer fra -1 til 1, hvor:
+        Silhouette scoren måler, hvor godt data er opdelt i klynger, og varierer fra -1 til 1:
 
-        - Tæt på 1 betyder, at datapunkterne er godt placeret i deres egen klynge og klart adskilt fra andre klynger.
-        - Tæt på 0 indikerer, at datapunkterne ligger tæt på grænsen mellem to klynger, og klyngeopdelingen derfor er mindre tydelig.
-        - Under 0 betyder, at datapunkterne muligvis er forkert klassificeret.
+        - En score tæt på 1 betyder, at datapunkterne er godt placeret i deres egen klynge og tydeligt adskilt fra andre klynger.
+        - En score tæt på 0 indikerer, at datapunkterne ligger tæt på grænsen mellem to klynger, hvilket gør klyngeopdelingen mindre klar.
+        - En score under 0 tyder på, at datapunkterne muligvis er forkert klassificeret.
 
-        En score på omkring 0.41 tyder på, at klyngerne har en nogenlunde klar adskillelse, men der er stadig overlap og mulighed for forbedring. Det kan være acceptabelt i komplekse eller virkelighedsnære data, hvor klare grænser mellem klynger ikke altid findes.
+        En score omkring 0.45 antyder, at klyngerne har en nogenlunde klar adskillelse, men der er stadig overlap og plads til forbedring. Dette kan være acceptabelt i komplekse eller virkelighedsnære data, hvor klare grænser mellem klynger ikke altid findes.
         """
     )
 
@@ -366,7 +364,7 @@ with tab4:
             st.title("Classification analyse")
 
             st.write(
-                f"Modellen opnår en accuracy på {acc:.2f}, hvilket betyder, at den korrekt klassificerer prisgrupperne lidt mere end halvdelen af gangene. "
+                f"Modellen opnår en accuracy på {acc:.2f}, hvilket betyder, at den korrekt klassificerer prisgrupperne lidt under halvdelen af gangene. Dette indikerer, at der stadig er plads til forbedringer, især når prisintervallerne ligger tæt på hinanden. "
                 "Dette indikerer, at der stadig er plads til forbedringer, især når prisintervallerne ligger tæt på hinanden."
             )
 
@@ -374,10 +372,10 @@ with tab4:
             """
             **Confusion matrixen** viser, hvordan klassifikationsmodellen præsterer på testdata ved at sammenligne de *sande pris-klasser* med de *forudsagte*.
 
-            - **Diagonalværdierne** (fx 191 for klasse 0, 136 for klasse 1 osv.) viser antallet af korrekt klassificerede observationer i hver pris-klasse.  
+            - **Diagonalværdierne** (fx 233 for klasse 0, 94 for klasse 1 osv.) viser antallet af korrekt klassificerede observationer i hver pris-klasse.  
             - **Tal uden for diagonalen** viser fejlklassifikationer, dvs. observationer der blev forudsagt til en forkert pris-klasse.
-
-            For eksempel bliver **83 observationer**, som i virkeligheden tilhører klasse 0, fejlagtigt forudsagt som klasse 1.
+            
+            For eksempel bliver **66 observationer**, som i virkeligheden tilhører klasse 0, fejlagtigt forudsagt som klasse 1.
 
             Modellen klarer sig bedst for **klasse 0** og **klasse 4**, hvor flest observationer klassificeres korrekt.  
             For klasser midt i skalaen (**klasse 2** og **klasse 3**) ses flere fejlklassifikationer, hvilket tyder på, at modellen har sværere ved at skelne mellem nærtliggende prisintervaller.
