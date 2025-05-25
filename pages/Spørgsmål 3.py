@@ -10,12 +10,12 @@ from datarenser import get_no_outliers_df_train
 st.title(" ✈️ Spg. 3 Hvordan varierer priserne afhængigt af rejsemåneden?")
 
 # --- Session-state dataframes ---------------------------------------
-if 'dfTrain' not in st.session_state or 'dfTrain_numeric' not in st.session_state:
-    st.error("❗ Data mangler i session state: 'dfTrain' og 'dfTrain_numeric'. Sørg for at indlæse data først.")
+if 'dfTrain' not in st.session_state:
+    st.error("❗ Data mangler i session state: 'dfTrain'. Sørg for at indlæse data først.")
     st.stop()
 
 
-dfNumeric = st.session_state['dfTrain_numeric']
+
 df = st.session_state['dfTrain']
 df_clean = get_no_outliers_df_train(df)
 
@@ -28,7 +28,7 @@ if st.checkbox("Vis et udsnit af data"):
     st.dataframe(df.sample(5))
 
 if st.checkbox("Grundlæggende statistik"):
-    st.write(df.describe())
+     st.write(df[["price", "journey_month"]].describe())
 
 st.subheader("📊 Visualiseringer fra analysen")
 
