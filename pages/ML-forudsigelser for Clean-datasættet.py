@@ -54,61 +54,77 @@ classification = None
 kmeans = None
 
 try:
-    st.warning("Træner/indlæser modeller...")
+    st.warning("Træner/indlæser modeller...")  # Viser en advarsel i UI om, at modeller er ved at blive trænet eller indlæst
 
-    # === REGRESSION ===
     if glob.glob("regression_Clean.pkl"):
+        # Hvis modellen allerede eksisterer, indlæs den fra fil
         regression = pickle.load(open("regression_Clean.pkl", "rb"))
+        
+        # Hvis testdata ikke er gemt i session state, lav nyt split og gem det
         if 'X_test_reg_Clean' not in st.session_state or 'y_test_reg_Clean' not in st.session_state:
             X, y = dfNumeric.drop('price', axis=1), dfNumeric['price']
             _, X_test, _, y_test = train_test_split(X, y, test_size=0.25, random_state=83)
             st.session_state['X_test_reg_Clean'] = X_test
             st.session_state['y_test_reg_Clean'] = y_test
     else:
+        # Hvis modellen ikke findes, split data og træn ny Random Forest
         X, y = dfNumeric.drop('price', axis=1), dfNumeric['price']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=83)
         regression = RandomForestRegressor(n_estimators=50, random_state=116)
         regression.fit(X_train, y_train)
+
+        # Gem model og testdata
         pickle.dump(regression, open("regression_Clean.pkl", "wb"))
         st.session_state['X_test_reg_Clean'] = X_test
         st.session_state['y_test_reg_Clean'] = y_test
 
-    # === CLUSTERING ===
     if glob.glob("cluster_Clean.pkl") and glob.glob("cluster_Clean.csv"):
+        # Hvis både model og labels eksisterer, indlæs dem
         kmeans = pickle.load(open("cluster_Clean.pkl", "rb"))
         rowCluster = pd.read_csv("cluster_Clean.csv", index_col=0)
     else:
+        # Ellers træn en ny KMeans-model og gem clusters
         antal_klynger = 9
         kmeans = KMeans(init='k-means++', n_clusters=antal_klynger, n_init=10, random_state=42)
         clusters = kmeans.fit_predict(dfCluster)
         rowCluster = pd.DataFrame(clusters, index=dfCluster.index, columns=['cluster'])
+
+        # Gem cluster labels og model
         rowCluster.to_csv("cluster_Clean.csv", index=True)
         pickle.dump(kmeans, open("cluster_Clean.pkl", "wb"))
 
+    # Tilføj cluster-information til klassifikationsdatasættet
     dfClassification['cluster'] = rowCluster['cluster']
 
-    # === CLASSIFICATION ===
     if glob.glob("classification_Clean.pkl"):
+        # Hvis modellen findes, indlæs den
         classification = pickle.load(open("classification_Clean.pkl", "rb"))
+
+        # Hvis testdata ikke er gemt, lav nyt split og gem det
         if 'Xc_test_Clean' not in st.session_state or 'yc_test_Clean' not in st.session_state:
             Xc, yc = dfClassification, price_classes.cat.codes
             _, Xc_test, _, yc_test = train_test_split(Xc, yc, test_size=0.2, random_state=88)
             st.session_state['Xc_test_Clean'] = Xc_test
             st.session_state['yc_test_Clean'] = yc_test
     else:
+        # Hvis modellen ikke findes, træn ny DecisionTreeClassifier
         Xc, yc = dfClassification, price_classes.cat.codes
         Xc_train, Xc_test, yc_train, yc_test = train_test_split(Xc, yc, test_size=0.2, random_state=88)
         classification = DecisionTreeClassifier(random_state=10)
         classification.fit(Xc_train, yc_train)
+
+        # Gem modellen og testdata
         pickle.dump(classification, open("classification_Clean.pkl", "wb"))
         st.session_state['Xc_test_Clean'] = Xc_test
         st.session_state['yc_test_Clean'] = yc_test
 
 except Exception as e:
+    # Hvis der sker en fejl under træning/indlæsning, vises fejlen og stop programmet
     st.error(f"Model-fejl: {e}")
     st.stop()
 
-# Herefter kan du bruge rowCluster, regression og classification som før…
+# Kopi af dfCluster bruges senere til f.eks. silhouette-plot
+X = dfCluster.copy()
 
 # Bruges i clustering silhouette plot
 X = dfCluster.copy()
