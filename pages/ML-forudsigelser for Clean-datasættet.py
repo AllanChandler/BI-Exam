@@ -123,10 +123,7 @@ except Exception as e:
     st.error(f"Model-fejl: {e}")
     st.stop()
 
-# Kopi af dfCluster bruges senere til f.eks. silhouette-plot
-X = dfCluster.copy()
-
-# Bruges i clustering silhouette plot
+# Kopi af dfCluster bruges senere til clustering silhouette plot
 X = dfCluster.copy()
 
 # Streamlit UI med faner 
