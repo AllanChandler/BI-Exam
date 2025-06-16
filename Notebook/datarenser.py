@@ -42,9 +42,6 @@ def load_data_train(path):
     # Fjerner duplikater for at undgå overvægt af gentagne data
     df = df.drop_duplicates()
 
-    # Fjerner 'Dep_Time' kolonnen, da den ikke skal bruges i analysen
-    df.drop(['Dep_Time'], axis=1, inplace=True)
-
     # Konverterer dato til datetime-type for nem ekstraktion
     df['Date_of_Journey'] = pd.to_datetime(df['Date_of_Journey'], format='%d/%m/%Y')
 
